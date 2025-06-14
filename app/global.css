@@ -1,0 +1,59 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.home-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.home-header {
+  background-color: #4caf50;
+  color: white;
+  padding: 20px;
+  border-bottom: 2px solid #388e3c;
+}
+
+.home-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+.home-main {
+  margin-top: 20px;
+}
+
+.home-image {
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.home-description {
+  font-size: 1.2rem;
+  color: #555;
+  margin: 20px 0;
+}
+
+.auth-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.auth-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.auth-button:hover {
+  background-color: #0056b3;
+}
