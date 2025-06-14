@@ -12,13 +12,12 @@
   
 }
 
-.home-container button {
+.auth-button {
   margin: 10px 20px;
   width: 200px; /* Optional: make buttons same width */
   padding: 10px;
   background-color: #E3C4FF;
   border-radius: 15px;
-
 }
 
 .home-greeting {
