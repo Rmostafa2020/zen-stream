@@ -6,8 +6,7 @@ async function saveExampleData() {
   try {
     // Step 1: Create a user
     const user = new User({
-      firstName: "Alice",
-      lastName: "Smith",
+      userName: "Alice23",
       email: "alice@example.com",
       password: "password123",
     });
