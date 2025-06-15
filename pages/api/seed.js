@@ -1,8 +1,12 @@
-require("../../backend/models/lib/mongodb");
-const User = require("../../backend/models/User");
-const History = require("../../backend/models/History");
+// pages/api/seed.js
+import dbConnect from "../../backend/models/lib/mongodb";
+import User from "../../backend/models/User";
+import History from "../../backend/models/History";
 
-async function saveExampleData() {
+export default async function handler(req, res) {
+  // Connect to MongoDB
+  await dbConnect();
+
   try {
     // Step 1: Create a user
     const user = new User({
@@ -16,15 +20,31 @@ async function saveExampleData() {
     const history = new History({
       user: user._id,
       title: "Anxiety and Mental Health",
-      podcast: "soemthing in the transcript",
+      podcast: "something in the transcript",
       date: new Date(),
     });
     await history.save();
 
-    console.log("User and podcast history saved successfully.");
+    // Return success response
+    res.status(200).json({
+      message: "User and podcast history saved successfully.",
+      user: {
+        id: user._id,
+        userName: user.userName,
+        email: user.email,
+      },
+      history: {
+        id: history._id,
+        title: history.title,
+        podcast: history.podcast,
+        date: history.date,
+      },
+    });
   } catch (err) {
     console.error("Error:", err);
+    res.status(500).json({
+      error: "Failed to save data",
+      details: err.message,
+    });
   }
 }
-
-saveExampleData();
