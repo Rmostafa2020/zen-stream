@@ -11,7 +11,6 @@ const historySchema = new mongoose.Schema(
     },
     title: { type: String, required: true },
     podcast: { type: String, required: true },
-    date: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
