@@ -1,17 +1,21 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Sidebar from "@/app/components/Sidebar";
+import { UserButton } from "@clerk/nextjs";
 
 
 
 export default function AudioPlayerPage() {
     const params = useParams();
+    const router = useRouter();
     const historyId = params.historyId;
 
     const [history, setHistory] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showTranscript, setShowTranscript] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -35,11 +39,38 @@ export default function AudioPlayerPage() {
         if (historyId) fetchHistory();
     }, [historyId]);
 
+    const handleDelete = async () => {
+        if (!window.confirm("Are you sure you want to delete this podcast? This action cannot be undone.")) {
+            return;
+        }
+
+        setIsDeleting(true);
+        try {
+            const res = await fetch(`/api/podcast/delete/${historyId}`, {
+                method: 'DELETE',
+            });
+
+            if (!res.ok) {
+                throw new Error("Failed to delete podcast");
+            }
+
+            // Redirect to home page after successful deletion
+            router.push('/home');
+        } catch (error) {
+            console.error("Failed to delete podcast:", error);
+            alert("Failed to delete podcast. Please try again.");
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
     if (loading) return <div className="text-center mt-10">Loading...</div>;
     if (!history)
         return <div className="text-center mt-10">History not found</div>;
 
     return (
+        <>
+        <Sidebar/>
         <div style={{
             minHeight: '100vh',
             background: '#fff',
@@ -67,7 +98,7 @@ export default function AudioPlayerPage() {
                 fontSize: 22,
                 color: '#7c3aed'
             }}>
-                T
+                <UserButton />
             </div>
 
             {/* Animated Bubble Background */}
@@ -235,7 +266,16 @@ export default function AudioPlayerPage() {
                         </button>
                     </div>
                     {/* Trash Icon */}
-                    <button style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                    <button 
+                        style={{ 
+                            background: 'none', 
+                            border: 'none', 
+                            cursor: isDeleting ? 'not-allowed' : 'pointer',
+                            opacity: isDeleting ? 0.6 : 1
+                        }} 
+                        onClick={handleDelete}
+                        disabled={isDeleting}
+                    >
                         <svg width="28" height="28" fill="none" stroke="#222" strokeWidth="2">
                             <rect x="9" y="11" width="10" height="10" rx="2" fill="none" />
                             <line x1="12" y1="14" x2="12" y2="18" stroke="#222" strokeWidth="2"/>
@@ -275,7 +315,7 @@ export default function AudioPlayerPage() {
                         }}
                         onClick={() => setShowTranscript((v) => !v)}
                     >
-                        Generate Transcript
+                       Show Transcript
                     </button>
                 </div>
             </div>
@@ -294,11 +334,12 @@ export default function AudioPlayerPage() {
                     color: '#222',
                     whiteSpace: 'pre-wrap'
                 }}>
-                    {history.transcript || "No transcript available."}
+                    {history.podcast || "No transcript available."}
                 </div>
             )}
 
             
         </div>
+        </>
     );
 }
