@@ -25,3 +25,44 @@
   margin: 5px 0;
   color:black;
 }
+
+.new-podcast-btn {
+  background: linear-gradient(90deg, #6a82fb 0%, #fc5c7d 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 16px 0;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.new-podcast-btn:hover {
+  background: linear-gradient(90deg, #fc5c7d 0%, #6a82fb 100%);
+  transform: translateY(-2px) scale(1.03);
+}
+.zen-suggestions-dropdown {
+  position: absolute;
+  top: 48px;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.zen-suggestion-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.zen-suggestion-item:hover {
+  background: #f0f4ff;
+}

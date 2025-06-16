@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FiMoreHorizontal, FiSettings } from "react-icons/fi";
-
+import "../global.css"; // Ensure you have global styles for the sidebar
 export default function Sidebar() {
   const [expanded, setExpanded] = useState(false);
 
@@ -36,7 +36,7 @@ export default function Sidebar() {
         </button>
         {expanded && (
           <div style={{ marginTop: 32, marginLeft: 24 }}>
-            <div style={{ marginBottom: 16, color: "#8f2fff", fontWeight: 500, cursor: "pointer" }}>+ New Podcast</div>
+            <button className="new-podcast-btn">+ New Podcast</button>
             <div style={{ marginBottom: 16, color: "#8f2fff", cursor: "pointer" }}>History</div>
             <div style={{ marginBottom: 16, color: "#8f2fff", cursor: "pointer" }}>Motivation and...</div>
             <div style={{ marginBottom: 16, color: "#8f2fff", cursor: "pointer" }}>Work Stress ov..</div>
@@ -45,10 +45,10 @@ export default function Sidebar() {
           </div>
         )}
       </div>
-      <div style={{ margin: "0 0 24px 24px", color: "#8f2fff", display: "flex", alignItems: "center", cursor: "pointer" }}>
+      {/* <div style={{ margin: "0 0 24px 24px", color: "#8f2fff", display: "flex", alignItems: "center", cursor: "pointer" }}>
         <FiSettings style={{ marginRight: 8 }} />
         {expanded && <span>Settings</span>}
-      </div>
+      </div> */}
     </div>
   );
 }
