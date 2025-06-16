@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    clerkId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
   },
   { timestamps: true }
 );
