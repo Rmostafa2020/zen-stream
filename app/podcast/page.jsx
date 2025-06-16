@@ -43,9 +43,9 @@ export default function PodcastPage() {
             </button>
         </div>
           <div className="podcast-transcript-box">
-            <b className="podcast-transcript-title">Transcript:</b>
+            <b className="podcast-transcript-title">Podcast Title:</b>
             <div className="podcast-transcript-content">
-              {/* Transcript text goes here */}
+              {/* podcast text goes here */}
             </div>
             <div className="podcast-show-more">
               <span className="podcast-show-more-icon">&#x25BC;</span> Show More
