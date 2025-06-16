@@ -1,25 +1,22 @@
 import dbConnect from "@/backend/models/lib/mongodb";
 import User from "@/backend/models/User";
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).end();
-
+export async function POST(request) {
   await dbConnect();
 
-  const event = req.body;
+  const event = await request.json();
+  console.log("Webhook received", event); // <-- Add this line
 
   if (event.type === "user.created") {
     const { id, email_addresses, username } = event.data;
     const email = email_addresses[0]?.email_address;
 
-    // Create user in MongoDB if not exists
     await User.findOneAndUpdate(
       { email },
       {
         $setOnInsert: {
           userName: username || email,
           email,
-          password: "clerk", // Or leave blank/null if not used
           clerkId: id,
         },
       },
@@ -27,7 +24,23 @@ export default async function handler(req, res) {
     );
   }
 
-  // Handle other events as needed
+  if (event.type === "user.updated") {
+    const { id, email_addresses, username } = event.data;
+    const email = email_addresses[0]?.email_address;
 
-  res.status(200).json({ received: true });
+    await User.findOneAndUpdate(
+      { clerkId: id },
+      {
+        userName: username || email,
+        email,
+      }
+    );
+  }
+
+  if (event.type === "user.deleted") {
+    const { id } = event.data;
+    await User.findOneAndDelete({ clerkId: id });
+  }
+
+  return new Response(JSON.stringify({ received: true }), { status: 200 });
 }
