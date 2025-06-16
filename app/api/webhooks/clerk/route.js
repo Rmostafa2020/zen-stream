@@ -1,5 +1,6 @@
 import dbConnect from "@/backend/models/lib/mongodb";
 import User from "@/backend/models/User";
+import History from "@/backend/models/History";
 
 export async function POST(request) {
   await dbConnect();
@@ -38,8 +39,20 @@ export async function POST(request) {
   }
 
   if (event.type === "user.deleted") {
-    const { id } = event.data;
-    await User.findOneAndDelete({ clerkId: id });
+    const { id: clerkId } = event.data;
+
+    // First, find the user by clerkId
+    const user = await User.findOne({ clerkId });
+
+    if (user) {
+      // Delete all history documents related to this user
+      await History.deleteMany({ user: user._id });
+
+      // Then delete the user document itself
+      await User.findOneAndDelete({ clerkId });
+    }
+
+    return new Response(JSON.stringify({ received: true }), { status: 200 });
   }
 
   return new Response(JSON.stringify({ received: true }), { status: 200 });
