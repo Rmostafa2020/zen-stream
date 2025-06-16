@@ -551,7 +551,7 @@ export async function POST(request) {
     // Get clerk user id from frontend 
     const { userId,tag } = await request.json();
     console.log("Authenticated userId:", userId);
-    // const userId = "user_2yZV5UUVwlyMI8PtzZMrLDYDHIt";
+    
     if (!userId) {
       console.log("No userId found - unauthorized");
       return new Response(JSON.stringify({ error: "Unauthorized - User not logged in" }), { status: 401 });

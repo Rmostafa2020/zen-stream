@@ -66,3 +66,30 @@
 .zen-suggestion-item:hover {
   background: #f0f4ff;
 }
+
+
+.history-item {
+  margin-bottom: 16px;
+  color: #8f2fff;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.history-item:hover {
+  background-color: #d9b3ff;
+  color: #5a00b3;
+}
+
+.new-podcast-btn {
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.new-podcast-btn:hover {
+  transform: translateY(-1px);
+}
