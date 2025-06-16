@@ -53,10 +53,10 @@
 //   );
 // }
 
-import React, { useState, useEffect } from "react";
-import { FiMoreHorizontal, FiSettings } from "react-icons/fi";
+import React, { useState, useEffect, useRef } from "react";
+import { FiMoreHorizontal } from "react-icons/fi";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import "../global.css";
 
 export default function Sidebar() {
@@ -64,8 +64,11 @@ export default function Sidebar() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dynamicWidth, setDynamicWidth] = useState(240); // Default expanded width
   const { user } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
+  const hiddenSpanRef = useRef(null);
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -75,12 +78,29 @@ export default function Sidebar() {
           if (!response.ok) throw new Error('Failed to fetch history');
           const data = await response.json();
           setHistory(data);
+          
+          // Calculate width after data is set
+          calculateMaxWidth(data);
         } catch (err) {
           setError(err.message);
         } finally {
           setLoading(false);
         }
       }
+    };
+
+    const calculateMaxWidth = (items) => {
+      if (!hiddenSpanRef.current || !items?.length) return;
+      
+      // Find longest title width
+      const maxWidth = items.reduce((max, item) => {
+        hiddenSpanRef.current.textContent = item.title;
+        const width = hiddenSpanRef.current.offsetWidth;
+        return Math.max(max, width);
+      }, 0);
+
+      // Set width with padding (48px = 24px margin-left * 2)
+      setDynamicWidth(Math.min(Math.max(maxWidth + 48, 240), 500)); // Min 240px, Max 500px
     };
 
     if (expanded) {
@@ -91,7 +111,7 @@ export default function Sidebar() {
   return (
     <div
       style={{
-        width: expanded ? 240 : 80,
+        width: expanded ? dynamicWidth : 80,
         background: "#e5c6fa",
         height: "100vh",
         transition: "width 0.3s",
@@ -104,6 +124,18 @@ export default function Sidebar() {
         zIndex: 10,
       }}
     >
+      {/* Hidden span for measuring text width */}
+      <span
+        ref={hiddenSpanRef}
+        style={{
+          position: 'absolute',
+          visibility: 'hidden',
+          whiteSpace: 'nowrap',
+          fontFamily: 'inherit',
+          fontSize: '16px' // Match your history item font size
+        }}
+      ></span>
+
       <div>
         <button
           style={{
@@ -120,8 +152,12 @@ export default function Sidebar() {
         </button>
         {expanded && (
           <div style={{ marginTop: 32, marginLeft: 24 }}>
-            <button className="new-podcast-btn">+ New Podcast</button>
-            <div style={{ color: "#8f2fff", marginBottom: 16 }}>History</div>
+            {!pathname.startsWith("/home") && (
+              <button className="new-podcast-btn" onClick={() => router.push(`/home/`)}>
+                + New Podcast
+              </button>
+            )}
+            <div style={{ color: "#8f2fff", marginBottom: 16, fontSize: 25 }}>History</div>
             
             {loading ? (
               <div style={{ color: "#8f2fff" }}>Loading history...</div>
@@ -133,17 +169,14 @@ export default function Sidebar() {
               history.map((item) => (
                 <div 
                   key={item._id}
-                  style={{ 
-                    marginBottom: 16, 
-                    color: "#8f2fff", 
-                    cursor: "pointer",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    maxWidth: "200px"
-                  }}
+                  className="history-item"
                   title={item.title}
                   onClick={() => router.push(`/podcast/${item._id}`)}
+                  style={{ 
+                    whiteSpace: 'nowrap',
+                    overflow: 'visible',
+                    textOverflow: 'clip'
+                  }}
                 >
                   {item.title}
                 </div>

@@ -14,7 +14,7 @@ const errorResponse = (message, status) =>
 
 export async function GET(request, { params }) {
   try {
-    const { clerkId } = params;
+    const { clerkId } = await params;
     
     if (!clerkId) return errorResponse("Clerk ID required", 400);
 
@@ -42,7 +42,7 @@ export async function GET(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
-    const { clerkId } = params;
+    const { clerkId } = await params;
 
     if (!clerkId) {
       return new Response(JSON.stringify({ error: "Clerk ID required" }), {
