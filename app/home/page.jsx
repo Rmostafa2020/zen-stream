@@ -5,6 +5,7 @@ import "./homepage.css";
 import { FiSearch } from 'react-icons/fi';
 import { FiMic } from 'react-icons/fi';
 import Sidebar from "../components/Sidebar";
+import { useRouter } from 'next/navigation';
 
 const SUGGESTIONS = [
   "acceptance",
@@ -132,6 +133,23 @@ const SUGGESTIONS = [
 ];
 
 export default function Home() {
+  const [userData, setUserData] = useState(null);
+  const router = useRouter();
+
+  React.useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const res = await fetch("/api/users/me");
+        const data = await res.json();
+        setUserData(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+    fetchUserData();
+  }, []);
+
   const [input, setInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -140,6 +158,65 @@ export default function Home() {
       input &&
       suggestion.toLowerCase().includes(input.toLowerCase())
   );
+
+  // async function sendTagToPodcastAPI(selectedTag) {
+  //   try {
+  //     const response = await fetch('/api/podcast', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       credentials: 'include',
+  //       body: JSON.stringify({ tag: selectedTag }),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error('Failed to fetch podcast data');
+  //     }
+
+  //     const data = await response.json();
+  //     console.log('Podcast data:', data);
+  //     return data;
+  //   } catch (error) {
+  //     console.error('Error:', error.message);
+  //   }
+  // }
+  async function sendTagToPodcastAPI(selectedTag) {
+  try {
+    // Assuming userData contains the Clerk ID as userData.clerkId or userData.id
+    const userId = userData?.clerkId; // Adjust property name as needed
+
+    if (!userId) {
+      throw new Error('User not authenticated or Clerk ID not found');
+    }
+
+    const response = await fetch('/api/podcast', { // Or your endpoint as in paste.txt
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        userId,
+        tag: selectedTag,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch podcast data');
+    }
+
+    const data = await response.json();
+    console.log('Podcast data:', data);
+    if (data?.id) {
+      router.push(`/podcast/${data.id}`);
+    }
+  } catch (error) {
+    console.error('Error:', error.message);
+    throw error; // Optionally rethrow to let caller handle it
+  }
+}
+
 
   return (
     <>
@@ -183,6 +260,7 @@ export default function Home() {
                       onMouseDown={() => {
                         setInput(suggestion);
                         setShowSuggestions(false);
+                        sendTagToPodcastAPI(suggestion);
                       }}
                     >
                       {suggestion}

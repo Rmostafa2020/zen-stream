@@ -21,6 +21,7 @@ export async function GET(request) {
       id: user._id,
       userName: user.userName,
       email: user.email,
+      clerkId: user.clerkId,
       createdAt: user.createdAt,
     }),
     { status: 200, headers: { "Content-Type": "application/json" } }
