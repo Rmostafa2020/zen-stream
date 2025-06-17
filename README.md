@@ -67,10 +67,6 @@ ZenStream is a calming, AI-powered podcast web app that helps users relax, focus
 - [React Icons](https://react-icons.github.io/react-icons/)
 - [Text-to-Speech API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis)
 
-## License
-
-MIT
-
 ---
 
 **Made with ❤️ for relaxation and focus.**
