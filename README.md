@@ -1,3 +1,84 @@
+# ZenStream
+
+ZenStream is a calming, AI-powered podcast web app that helps users relax, focus, and find serenity. Users can sign in, select or search for topics, and generate personalized podcasts with text-to-speech support.
+
+## Features
+
+- **Clerk Authentication**: Secure sign-in and sign-up with Clerk.
+- **Personal Dashboard**: Each user has a unique homepage with a sidebar and profile menu.
+- **Topic Suggestions**: Google-style search box with topic suggestions as you type.
+- **Podcast Generation**: Create new podcasts based on selected or typed topics.
+- **Text-to-Speech**: Listen to generated podcasts directly in the browser.
+- **Responsive UI**: Clean, modern interface with user-friendly navigation.
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or newer recommended)
+- npm or yarn
+- Clerk account (for authentication keys)
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/zen-stream.git
+   cd zen-stream
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Set up environment variables:**
+
+   Create a `.env.local` file in the root directory and add your Clerk keys:
+   ```
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+   CLERK_SECRET_KEY=your_clerk_secret_key
+   ```
+
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+5. **Open [http://localhost:3000](http://localhost:3000) in your browser.**
+
+## Usage
+
+- **Sign In:** Click the "Sign In" button to authenticate with Clerk.
+- **Search Topics:** Start typing in the search box to see topic suggestions.
+- **Select a Topic:** Choose a suggested topic or type your own.
+- **Generate Podcast:** Click "+ New Podcast" to create a personalized podcast.
+- **Listen:** Use the play button to listen to the generated podcast via text-to-speech.
+
+
+## Dependencies
+
+- [Next.js](https://nextjs.org/)
+- [Clerk](https://clerk.com/)
+- [React Icons](https://react-icons.github.io/react-icons/)
+- [Text-to-Speech API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis)
+
+---
+
+**Made with ❤️ for relaxation and focus.**
+
+
+
+
+
+
+
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
