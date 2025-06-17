@@ -4,7 +4,7 @@ ZenStream is a calming, AI-powered podcast web app that helps users relax, focus
 
 ## Features
 
-- **Clerk Authentication**: Secure sign-in and sign-up with Clerk.
+- **Clerk Authentication**: Secure sign-in and sign-up with Clerk
 - **Personal Dashboard**: Each user has a unique homepage with a sidebar and profile menu.
 - **Topic Suggestions**: Google-style search box with topic suggestions as you type.
 - **Podcast Generation**: Create new podcasts based on selected or typed topics.
