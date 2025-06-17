@@ -4,14 +4,8 @@ import { NextResponse } from 'next/server';
 // 1. Import the correct client library
 import { TextToSpeechClient } from '@google-cloud/text-to-speech';
 
-// 2. Instantiate the client. 
-// It will automatically find and use your service account credentials
-if (!process.env.GCP_SERVICE_ACCOUNT_KEY) {
-  throw new Error('The GCP_SERVICE_ACCOUNT_KEY environment variable is not set.');
-}
 
-const credentials = JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY);
-const ttsClient = new TextToSpeechClient({ credentials });
+const ttsClient = new TextToSpeechClient();
 
 export async function POST(request) {
   try {
