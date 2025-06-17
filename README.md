@@ -2,6 +2,10 @@
 
 ZenStream is a calming, AI-powered podcast web app that helps users relax, focus, and find serenity. Users can sign in, select or search for topics, and generate personalized podcasts with text-to-speech support. The two main components of the app are the use of Google Cloud and MongoDB. We used the Gemini Api and the Google Cloud for deployment and MongoDB for vector search. 
 
+## Live Demo Link
+
+https://zen-stream-243709338804.northamerica-northeast1.run.app
+
 ## Features
 
 - **Clerk Authentication**: Secure sign-in and sign-up with Clerk
