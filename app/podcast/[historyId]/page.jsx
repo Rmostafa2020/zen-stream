@@ -20,6 +20,12 @@ export default function AudioPlayerPage() {
     const sourceRef = useRef(null);
     const animationFrameRef = useRef(null);
 
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [pausedAt, setPausedAt] = useState(0);
+    const audioBufferRef = useRef(null);
+    const startTimeRef = useRef(0);
+
+
     // Add WAV header to raw PCM data
     const addWavHeader = async (audioBlob) => {
         const pcmData = await audioBlob.arrayBuffer();
@@ -46,70 +52,93 @@ export default function AudioPlayerPage() {
 
     const handlePlay = async () => {
         try {
-            // Stop any existing playback
-            if (sourceRef.current) {
-                sourceRef.current.stop();
-                sourceRef.current.disconnect();
-                sourceRef.current = null;
+            if (!audioBufferRef.current) {
+                // If no audio buffer, fetch and decode
+                const response = await fetch('/api/gcp/tts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: history.podcast })
+                });
+    
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'TTS failed');
+                }
+    
+                const audioBlob = await response.blob();
+                const fixedBlob = await addWavHeader(audioBlob);
+                const arrayBuffer = await fixedBlob.arrayBuffer();
+    
+                audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({
+                    sampleRate: 24000
+                });
+    
+                audioBufferRef.current = await audioContextRef.current.decodeAudioData(arrayBuffer);
+                setDuration(audioBufferRef.current.duration);
+            } else {
+                if (!audioContextRef.current || audioContextRef.current.state === "closed") {
+                    audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({
+                        sampleRate: 24000
+                    });
+                }
             }
-            if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-                await audioContextRef.current.close();
-            }
-            if (animationFrameRef.current) {
-                cancelAnimationFrame(animationFrameRef.current);
-                animationFrameRef.current = null;
-            }
-
-            setCurrentTime(0);
-            setDuration(0);
-
-            const response = await fetch('/api/gcp/tts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: history.podcast })
-            });
-
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'TTS failed');
-            }
-
-            const audioBlob = await response.blob();
-            const fixedBlob = await addWavHeader(audioBlob);
-            const arrayBuffer = await fixedBlob.arrayBuffer();
-
-            // Initialize audio context
-            audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({
-                sampleRate: 24000
-            });
-
-            // Decode audio data
-            const audioBuffer = await audioContextRef.current.decodeAudioData(arrayBuffer);
-            setDuration(audioBuffer.duration);
-
-            // Create and play source
+    
+            // Setup and play
             sourceRef.current = audioContextRef.current.createBufferSource();
-            sourceRef.current.buffer = audioBuffer;
+            sourceRef.current.buffer = audioBufferRef.current;
             sourceRef.current.connect(audioContextRef.current.destination);
-
-            const startTime = audioContextRef.current.currentTime;
-            sourceRef.current.start(startTime);
-
-            // Update progress bar
+    
+            const offset = pausedAt;
+            startTimeRef.current = audioContextRef.current.currentTime - offset;
+            sourceRef.current.start(0, offset);
+            setIsPlaying(true);
+    
             const updateProgress = () => {
-                const elapsed = audioContextRef.current.currentTime - startTime;
-                setCurrentTime(Math.min(elapsed, audioBuffer.duration));
-                if (elapsed < audioBuffer.duration) {
+                const elapsed = audioContextRef.current.currentTime - startTimeRef.current;
+                setCurrentTime(Math.min(elapsed, audioBufferRef.current.duration));
+                if (elapsed < audioBufferRef.current.duration && isPlaying) {
                     animationFrameRef.current = requestAnimationFrame(updateProgress);
                 }
             };
             updateProgress();
-
         } catch (error) {
-            console.error('Playback error:', error);
+            console.error("Playback error:", error);
             alert(`Audio Error: ${error.message}`);
         }
     };
+    
+
+
+    const handlePause = () => {
+        if (sourceRef.current) {
+            sourceRef.current.stop();
+            sourceRef.current.disconnect();
+            sourceRef.current = null;
+            setPausedAt(audioContextRef.current.currentTime - startTimeRef.current);
+            setIsPlaying(false);
+            cancelAnimationFrame(animationFrameRef.current);
+        }
+    };
+
+    const handleStop = async () => {
+        if (sourceRef.current) {
+            sourceRef.current.stop();
+            sourceRef.current.disconnect();
+            sourceRef.current = null;
+        }
+        if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+            await audioContextRef.current.close();
+        }
+        audioContextRef.current = null;
+        audioBufferRef.current = null;
+        setCurrentTime(0);
+        setDuration(0);
+        setPausedAt(0);
+        setIsPlaying(false);
+        cancelAnimationFrame(animationFrameRef.current);
+    };
+    
+    
 
     const handleDelete = async () => {
         if (!window.confirm("Are you sure you want to delete this podcast? This action cannot be undone.")) {
@@ -365,10 +394,23 @@ export default function AudioPlayerPage() {
                             <button style={{ background: 'none', border: 'none', cursor: 'pointer' }} onClick={handlePlay}>
                                 <svg width="28" height="28" fill="none" stroke="#222" strokeWidth="2"><polygon points="7,5 23,14 7,23" fill="#222" /></svg>
                             </button>
-                            {/* Volume Icon */}
-                            <button style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                                <svg width="24" height="24" fill="none" stroke="#222" strokeWidth="2"><polygon points="3,9 9,9 15,3 15,21 9,15 3,15" fill="#222" /></svg>
+
+                            {/* Pause Icon */}
+                            <button style={{ background: 'none', border: 'none', cursor: 'pointer' }} onClick={handlePause}>
+                                <svg width="24" height="24" stroke="#222" strokeWidth="2">
+                                    <rect x="6" y="4" width="4" height="16" fill="#222" />
+                                    <rect x="14" y="4" width="4" height="16" fill="#222" />
+                                </svg>
                             </button>
+
+                            {/* Stop Icon */}
+                            <button style={{ background: 'none', border: 'none', cursor: 'pointer' }} onClick={handleStop}>
+                                <svg width="24" height="24" stroke="#222" strokeWidth="2">
+                                    <rect x="6" y="6" width="12" height="12" fill="#222" />
+                                </svg>
+                            </button>
+
+        
                         </div>
                         {/* Trash Icon */}
                         <button
