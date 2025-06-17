@@ -1,6 +1,6 @@
 // pages/api/users/index.js - Create new user
-import dbConnect from "../../../lib/mongodb";
-import User from "../../../models/User";
+import dbConnect "@/backend/models/lib/mongodb"
+import User from "@/backend/models/User"
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
