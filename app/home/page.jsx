@@ -250,7 +250,7 @@ export default function Home() {
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
                 autoComplete="off"
               />
-              <FiMic className="zen-mic-icon" />
+             
               {showSuggestions && filteredSuggestions.length > 0 && (
                 <div className="zen-suggestions-dropdown">
                   {filteredSuggestions.map(suggestion => (

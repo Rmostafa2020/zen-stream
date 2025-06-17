@@ -2,7 +2,7 @@ import dbConnect from "@/backend/models/lib/mongodb";
 import History from "@/backend/models/History";
 
 export async function DELETE(request, { params }) {
-  const { historyId } = params;
+  const { historyId } = await params;
 
   if (!historyId) {
     return new Response(JSON.stringify({ error: "History ID is required" }), { status: 400 });
