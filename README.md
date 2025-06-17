@@ -59,24 +59,6 @@ ZenStream is a calming, AI-powered podcast web app that helps users relax, focus
 - **Generate Podcast:** Click "+ New Podcast" to create a personalized podcast.
 - **Listen:** Use the play button to listen to the generated podcast via text-to-speech.
 
-## Project Structure
-
-```
-/app
-  /dashboard
-  /home
-  /sign-in
-  /components
-/public
-/styles
-.env.local
-```
-
-## Customization
-
-- **Add More Topics:** Edit the `SUGGESTIONS` array in `/app/home/page.jsx`.
-- **Change Styles:** Update `homepage.css` for UI customization.
-- **Sidebar/Navigation:** Modify `/components/Sidebar.jsx` as needed.
 
 ## Dependencies
 
