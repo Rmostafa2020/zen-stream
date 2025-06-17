@@ -15,7 +15,7 @@ ZenStream is a calming, AI-powered podcast web app that helps users relax, focus
 
 ### Prerequisites
 
-- Node.js (v18 or newer recommended)
+- Node.js (v20 or newer recommended)
 - npm or yarn
 - Clerk account (for authentication keys)
 
