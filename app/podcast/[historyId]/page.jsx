@@ -63,7 +63,7 @@ export default function AudioPlayerPage() {
             setCurrentTime(0);
             setDuration(0);
 
-            const response = await fetch('/api/gemini/tts', {
+            const response = await fetch('/api/gcp/tts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: history.podcast })
